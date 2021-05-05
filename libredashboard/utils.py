@@ -1,7 +1,9 @@
 import plotly
 import plotly.graph_objs as go
+import json
 
 def get_plot(df, x_axis):
+    print(df.head())
     data = []
     for column in df.columns:
         if column == x_axis:

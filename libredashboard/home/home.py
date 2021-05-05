@@ -5,7 +5,6 @@ import pandas as pd
 import plotly
 import plotly.graph_objs as go
 import numpy as np
-import json
 import sys
 import os
 from werkzeug.utils import secure_filename
@@ -18,6 +17,7 @@ home_bp = Blueprint(
     template_folder='templates',
     static_folder='static'
 )
+
 
 # Context Processors
 @app.context_processor
@@ -33,6 +33,8 @@ def dated_url_for(endpoint, **values):
             values['q'] = int(os.stat(file_path).st_mtime)
     return url_for(endpoint, **values)
 
+
+# Routes
 @home_bp.route('/', methods=['GET', 'POST'])
 def home():
     global ROOT_PATH
@@ -50,6 +52,7 @@ def home():
         
     return render_template('home.html', df=pd.DataFrame(), columns=[]) 
 
+
 @home_bp.route('/about', methods=['GET'])
 def about():
     """Homepage."""
@@ -58,34 +61,13 @@ def about():
 
 @home_bp.route('/plot', methods=['GET', 'POST'])
 def plot():
-    print(request.form)
     path = session['df_path'] if 'df_path' in session else False 
     if path:
-        columns = request.form['df']
-        print(f'Columns: {columns}')
+        columns = request.form.getlist('df')
         df = pd.read_csv(path)
-        df = df[columns]
-        x_axis = columns[-1]
-        print(f'X_AXIS: {x_axis}')
+        x_axis = request.form['x_axis']
+        complete_columns = columns + [x_axis]
+        
+        df = df[complete_columns]
         json = get_plot(df, x_axis)
         return render_template('plot.html', plot=json)
-    
-
-def create_plot():
-
-    N = 40
-    x = np.linspace(0, 1, N)
-    y = np.random.randn(N)
-    df = pd.DataFrame({'x': x, 'y': y}) # creating a sample dataframe
-
-
-    data = [
-        go.Bar(
-            x=df['x'], # assign x as the dataframe column 'x'
-            y=df['y']
-        )
-    ]
-
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return graphJSON
