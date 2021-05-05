@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+<h1 class="display-1">LibreDashboard</h1>
+<form method=post enctype=multipart/form-data>
+    <input type=file class="custom-file-input" name=file><br>
+    <button type="submit" class="btn btn-primary mb-2">Submit</button><br>
+</form><br>
+
+<div>
+    <h2>Choose the columns you want to plot</h2>
+    <form method=post enctype=multipart/form-data action="{{ url_for('home_bp.plot') }}">
+    <select  class="form-select" multiple aria-label="multiple select example" name="df" method="GET" action="/">
+    {% for column in df.columns %}
+            <option value="{{ column }}">{{ column }}</option>
+        {% endfor %}
+      </select><br><br><br><br><br>
+      <select  class="form-select"  aria-label="multiple select example" name="columns" method="GET" action="/">
+        {% for column in df.columns %}
+                <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+          </select>
+      <button type="submit" class="btn btn-primary mb-2" value="submit">Plot!</button>
+    </form><br><br>
+</div>
+{% endblock %}
+{% block plot %}
+{% endblock %}
+
