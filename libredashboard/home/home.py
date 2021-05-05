@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request,session
+from flask import Blueprint, render_template, request, session, url_for
 from flask import current_app as app
 from libredashboard.utils import get_plot
 import pandas as pd
@@ -19,6 +19,19 @@ home_bp = Blueprint(
     static_folder='static'
 )
 
+# Context Processors
+@app.context_processor
+def override_url_for():
+    return dict(url_for=dated_url_for)
+
+def dated_url_for(endpoint, **values):
+    if endpoint == 'static' or endpoint == 'templates':
+        filename = values.get('filename', None)
+        if filename:
+            file_path = os.path.join(app.root_path,
+                                 endpoint, filename)
+            values['q'] = int(os.stat(file_path).st_mtime)
+    return url_for(endpoint, **values)
 
 @home_bp.route('/', methods=['GET', 'POST'])
 def home():
@@ -33,9 +46,9 @@ def home():
             print(df.head())
             tmp_filename = 'tmp/my_tmp_file.csv'
             session['df_path'] = tmp_path
-            return render_template('home.html', df=df)
+            return render_template('home.html', df=df, columns=df.columns)
         
-    return render_template('home.html', df=pd.DataFrame()) 
+    return render_template('home.html', df=pd.DataFrame(), columns=[]) 
 
 @home_bp.route('/about', methods=['GET'])
 def about():
