@@ -1,35 +1,65 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
 <h1 class="display-1">LibreDashboard</h1>
-<h3>1. Select a csv file!</h3>
+<h3>Select a csv file!</h3>
 <form method=post enctype=multipart/form-data>
-    <input type=file class="custom-file-input" name=file><br>
-    <button type="submit" class="btn btn-primary mb-2">Submit</button><br>
+  <input type=file class="custom-file-input" name=file><br>
+  <button type="submit" class="btn btn-primary mb-2">Submit</button><br>
 </form><br>
+<p style="text-align:center">The correct format for ML models should look something like this:</p>
+<img src="/static/correct_format.PNG" alt="CorrectFormat" class="centered">
 
-    <h3>2. Choose the columns you want to plot</h2>
-    <form method=post enctype=multipart/form-data action="{{ url_for('home_bp.plot') }}">
-    <div>
-    <select  class="form-select" multiple aria-label="multiple select example" name="df" method="GET" action="/">
-    {% for column in df.columns %}
-            <option value="{{ column }}">{{ column }}</option>
-        {% endfor %}
-      </select>
-    </div>
-      <br><br><br><br><br>
-      <div>
-        <h3>3. Select your x axis:</h3>
-      <select  class="form-select"  aria-label="multiple select example" name="x_axis" method="GET" action="/">
-        {% for column in columns %}
-                <option value="{{ column }}">{{ column }}</option>
-            {% endfor %}
-          </select>
-      <button type="submit" class="btn btn-primary mb-2" value="submit">Plot!</button>
-    </div>
-    </form><br><br>
-  
 
-{% endblock %}
-{% block plot %}
-{% endblock %}
+<h2 class="display-2"> Data Visualization</h2>
+<h3>Choose the columns you want to plot</h3>
+<form method=post enctype=multipart/form-data action="{{ url_for('home_bp.plot') }}">
+  <div>
+    <select class="form-select" multiple aria-label="multiple select example" name="df" method="GET" action="/">
+      {% for column in df.columns %}
+      <option value="{{ column }}">{{ column }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <br><br><br><br><br>
+  <div>
+    <h3>Select your x axis:</h3>
+    <select class="form-select" aria-label="multiple select example" name="x_axis" method="GET" action="/">
+      {% for column in columns %}
+      <option value="{{ column }}">{{ column }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary mb-2" value="submit">Plot!</button>
+  </div>
+</form>
+<p style="text-align:center"> Where the green columns are input variables and the yellow column is the output one</p>
 
+<br><br>
+
+<h2 class="display-2"> Train a ML Model!</h2>
+<h3>Choose your input variables</h3>
+<form method=post enctype=multipart/form-data action="{{ url_for('home_bp.plot') }}">
+  <div>
+    <select class="form-select" multiple aria-label="multiple select example" name="df" method="GET" action="/">
+      {% for column in df.columns %}
+      <option value="{{ column }}">{{ column }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <br><br><br><br><br>
+  <div>
+    <h3>Select the column you want to predict:</h3>
+    <select class="form-select" aria-label="multiple select example" name="x_axis" method="GET" action="/">
+      {% for column in columns %}
+      <option value="{{ column }}">{{ column }}</option>
+      {% endfor %}
+    </select>
+    <h3>Select your file to predict</h3>
+    <form method=post enctype=multipart/form-data>
+      <input type=file class="custom-file-input" name=prediction><br>
+      <button type="submit" class="btn btn-primary mb-2">Submit</button><br>
+    </form><br>
+
+
+    {% endblock %}
+    {% block plot %}
+    {% endblock %}
